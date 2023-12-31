@@ -230,14 +230,13 @@ namespace TIA_Add_In_DeviceChange_Weidmueller
         {
             try
             {
-                int solt = 1;
                 foreach (var oldDeviceItem in oldDevice.DeviceItems)
                 {
+                    int solt = (int)oldDeviceItem.GetAttribute("PositionNumber");
                     //查询是否可以在这个插槽0位置上移动模块
                     if (newDevice.DeviceItems[0].CanPlugMove(oldDeviceItem, solt))
                     {
                         newDevice.DeviceItems[0].PlugMove(oldDeviceItem, solt);
-                        solt++;
                     }
                 }
             }
@@ -257,12 +256,12 @@ namespace TIA_Add_In_DeviceChange_Weidmueller
         {
             try
             {
-                int solt = 1;
                 foreach (var oldDeviceItem in oldDevice.DeviceItems)
                 {
                     string name = oldDeviceItem.Name;
                     string gsdId = oldDeviceItem.GetAttribute("GsdId").ToString();
                     string gsdType = oldDeviceItem.GetAttribute("GsdType").ToString();
+                    int solt = (int)oldDeviceItem.GetAttribute("PositionNumber");
                     const string newGsdId = "GSDML-V2.35-WI-UR20_BASIC-20220715.XML";
                     //int startAddress = oldDeviceItem.DeviceItems[0].Addresses[0].StartAddress;
                     //(Read, System.String, GSD:GSDML-V2.35-WI-UR20_BASIC-20210606.XML/M/ID_Mod_UR20_BASIC_16DI_P)
@@ -274,7 +273,6 @@ namespace TIA_Add_In_DeviceChange_Weidmueller
                         DeviceItem deviceItem = newDevice.DeviceItems[0].PlugNew(newDeviceItem, name, solt);
                         int oldStartAddress = oldDeviceItem.DeviceItems[0].Addresses[0].StartAddress;
                         deviceItem.DeviceItems[0].Addresses[0].SetAttribute("StartAddress", oldStartAddress);
-                        solt++;
                     }
                 }
             }
