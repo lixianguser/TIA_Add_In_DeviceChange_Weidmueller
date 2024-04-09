@@ -27,7 +27,6 @@ namespace TIA_Add_In_DeviceChange_Weidmueller
         private static NetworkInterface newInterface   = null;
         private static Node             newNode        = null;
         private static IoConnector      newIoConnector = null;
-        private static Project          project;
 
         /// <summary>
         /// Base class for projects
@@ -70,7 +69,7 @@ namespace TIA_Add_In_DeviceChange_Weidmueller
                 using (ExclusiveAccess exclusiveAccess = _tiaPortal.ExclusiveAccess("修改 UR20 设备/版本……"))
                 {
                     using (Transaction transaction =
-                           exclusiveAccess.Transaction(project, "修改 UR20 设备/版本"))
+                           exclusiveAccess.Transaction(_projectBase, "修改 UR20 设备/版本"))
                     {
                         if (!IsOffline())
                         {
@@ -150,11 +149,11 @@ namespace TIA_Add_In_DeviceChange_Weidmueller
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        private static bool IsOffline( /*IEngineeringServiceProvider item*/)
+        private bool IsOffline( /*IEngineeringServiceProvider item*/)
         {
             bool ret = false;
 
-            foreach (Device device in project.Devices)
+            foreach (Device device in _projectBase.Devices)
             {
                 DeviceItem deviceItem = device.DeviceItems[1];
                 if (deviceItem.GetAttribute("Classification") is DeviceItemClassifications.CPU)
@@ -194,7 +193,7 @@ namespace TIA_Add_In_DeviceChange_Weidmueller
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        private static Device CreateNewDevice(string name, string pnName)
+        private Device CreateNewDevice(string name, string pnName)
         {
             try
             {
@@ -203,7 +202,7 @@ namespace TIA_Add_In_DeviceChange_Weidmueller
                 string gsdId  = "GSD:GSDML-V2.35-WI-UR20_BASIC-20220715.XML/D";
                 string pnId   = "GSD:GSDML-V2.35-WI-UR20_BASIC-20220715.XML/DAP/DAP 2";
                 string rackId = "GSD:GSDML-V2.35-WI-UR20_BASIC-20220715.XML/R/DAP 2";
-                Device device = project.Devices.Create(gsdId, name);
+                Device device = _projectBase.Devices.Create(gsdId, name);
                 //插入插槽
                 if (device.CanPlugNew(rackId, "Rack", 0))
                     device.PlugNew(rackId, "Rack", 0);
